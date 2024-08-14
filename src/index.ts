@@ -25,8 +25,10 @@ type Data = {
     if (title.split(":").length < 2) return;
 
     const date = title.match(/\b((\w{3,9})\s+\d{1,2},\s+\d{4})\b/)?.[0];
+    const raw = Date.parse(date!);
+    const isNew = Date.now() <= raw;
 
-    console.log({ date });
+    console.log({ date, raw, isNew });
 
     data.push({
       title,
