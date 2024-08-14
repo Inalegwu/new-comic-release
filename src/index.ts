@@ -1,11 +1,17 @@
 import axios from "axios";
 import { load } from "cheerio";
+import { ok } from "neverthrow";
 
 type Data = {
   title: string;
   href: string;
   date: string;
 };
+
+const parseData = (data: Data[]) =>
+  ok({
+    completed: true,
+  });
 
 (async (url: string) => {
   const data: Data[] = [];
@@ -39,4 +45,9 @@ type Data = {
   });
 
   console.log(data);
+
+  parseData(data).match(
+    (t) => {},
+    (e) => {},
+  );
 })("https://comixnow.com/category/dc-weekly/");
