@@ -1,3 +1,4 @@
+import Env from "@env";
 import { defineConfig } from "drizzle-kit";
 
 export default defineConfig({
@@ -5,7 +6,7 @@ export default defineConfig({
   schema: "./src/db/schema.ts",
   driver: "turso",
   dbCredentials: {
-    url: process.env.DATABASE_URL!,
-    authToken: process.env.DATABASE_AUTH_TOKEN!,
+    url: Env.DATABASE_URL,
+    authToken: Env.DATABASE_AUTH_TOKEN,
   },
 });
