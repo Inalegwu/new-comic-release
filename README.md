@@ -1,15 +1,4 @@
-# new-comic-release
+# New Comic Release
 
-To install dependencies:
-
-```bash
-bun install
-```
-
-To run:
-
-```bash
-bun run src/index.ts
-```
-
-This project was created using `bun init` in bun v1.1.20. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
+Detect when there is a new DC Comic Release and Writes it to a Turso database
+which will be used to inform me of new releases

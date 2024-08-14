@@ -4,6 +4,7 @@ import { load } from "cheerio";
 type Data = {
   title: string;
   href: string;
+  date: string;
 };
 
 (async (url: string) => {
@@ -33,6 +34,7 @@ type Data = {
     data.push({
       title,
       href,
+      date: date!,
     });
   });
 
