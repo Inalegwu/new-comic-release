@@ -1,6 +1,9 @@
 import axios from "axios";
 import { load } from "cheerio";
 import { ok } from "neverthrow";
+import { v4 } from "uuid";
+import { db } from "./db";
+import { issues, releases } from "./db/schema";
 
 type Data = {
   title: string;
@@ -15,6 +18,19 @@ const parseData = (data: Data[]) =>
   data.forEach(async (article) => {
     if (!article.isNew) return;
 
+    const exists = await db.query.releases.findFirst({
+      where: (release, { eq }) =>
+        eq(releases.releaseDate, new Date(article.timestamp)),
+      with: {
+        issues: true,
+      },
+    });
+
+    if (exists) {
+      console.log("Already saved", { exists });
+      return;
+    }
+
     const page = await axios.get(article.href);
 
     const $ = load(page.data);
@@ -24,14 +40,37 @@ const parseData = (data: Data[]) =>
     const regex = /[\w\s&]+ \#\d+/g;
 
     const text = body.text();
-    const issues = text
+    const parsed = text
       .split("\n")
       .map((v) => v.trim())
       .join("\n")
       .match(regex)
       ?.map((v) => v.trim());
 
-    console.log({ issues, date: article.date });
+    if (parsed === undefined) return;
+
+    const rel = await db
+      .insert(releases)
+      .values({
+        id: v4(),
+        releaseDate: new Date(article.timestamp),
+        url: article.href,
+        name: article.date,
+      })
+      .returning({
+        id: releases.id,
+        releaseDate: releases.releaseDate,
+      })
+      .execute();
+
+    for (const p of parsed) {
+      db.insert(issues).values({
+        id: v4(),
+        title: p,
+        date: rel[0].releaseDate,
+        releaseId: rel[0].id,
+      });
+    }
 
     return ok({
       completed: true,

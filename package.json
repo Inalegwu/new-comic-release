@@ -8,6 +8,7 @@
   "devDependencies": {
     "@biomejs/biome": "^1.8.3",
     "@types/bun": "latest",
+    "@types/uuid": "^10.0.0",
     "drizzle-kit": "^0.24.0"
   },
   "peerDependencies": {
@@ -20,7 +21,8 @@
     "dotenv": "^16.4.5",
     "drizzle-orm": "^0.33.0",
     "envalid": "^8.0.0",
-    "neverthrow": "^7.0.0"
+    "neverthrow": "^7.0.0",
+    "uuid": "^10.0.0"
   },
   "trustedDependencies": ["@biomejs/biome", "esbuild"]
 }

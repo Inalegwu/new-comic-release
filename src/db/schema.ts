@@ -13,6 +13,7 @@ export const releases = sqliteTable(
     releaseDate: integer("release-date", {
       mode: "timestamp",
     }).unique(),
+    name: text("name"),
     url: text("url"),
   },
   (table) => ({
