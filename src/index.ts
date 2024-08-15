@@ -26,7 +26,7 @@ const parseData = (data: Data[]) =>
 
     if (exists) {
       console.log("Already saved", { exists });
-      return;
+      process.exit();
     }
 
     const page = await axios.get(article.href);
