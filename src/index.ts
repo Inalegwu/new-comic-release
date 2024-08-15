@@ -13,12 +13,25 @@ type Data = {
 const parseData = (data: Data[]) =>
   // biome-ignore lint/complexity/noForEach: one liner
   data.forEach(async (article) => {
+    if (!article.isNew) return;
+
     const page = await axios.get(article.href);
 
     const $ = load(page.data);
     const body = $("div.tdb-block-inner").find("p");
 
-    console.log(`${body.text()} \n`);
+    const regexOld = /\w+(?: \w+)* \#\d+/g;
+    const regex = /[\w\s&]+ \#\d+/g;
+
+    const text = body.text();
+    const issues = text
+      .split("\n")
+      .map((v) => v.trim())
+      .join("\n")
+      .match(regex)
+      ?.map((v) => v.trim());
+
+    console.log({ issues, date: article.date });
 
     return ok({
       completed: true,
@@ -55,8 +68,6 @@ const parseData = (data: Data[]) =>
       timestamp,
     });
   });
-
-  console.log(data);
 
   parseData(data);
 })("https://comixnow.com/category/dc-weekly/");
