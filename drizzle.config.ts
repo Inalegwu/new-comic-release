@@ -2,10 +2,10 @@ import Env from "@env";
 import { defineConfig } from "drizzle-kit";
 
 export default defineConfig({
-  dialect: "sqlite",
+  dialect: "postgresql",
   schema: "./src/db/schema.ts",
   dbCredentials: {
-    url: Env.LOCAL_DB,
+    url: Env.DATABASE_URL,
     // authToken: Env.DATABASE_AUTH_TOKEN,
   },
 });

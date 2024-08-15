@@ -19,8 +19,7 @@ const parseData = (data: Data[]) =>
     if (!article.isNew) return;
 
     const exists = await db.query.releases.findFirst({
-      where: (release, { eq }) =>
-        eq(releases.releaseDate, new Date(article.timestamp)),
+      where: (release, { eq }) => eq(releases.releaseDate, article.date),
       with: {
         issues: true,
       },
@@ -53,7 +52,7 @@ const parseData = (data: Data[]) =>
       .insert(releases)
       .values({
         id: v4(),
-        releaseDate: new Date(article.timestamp),
+        releaseDate: article.date,
         url: article.href,
         name: article.date,
       })
@@ -64,12 +63,20 @@ const parseData = (data: Data[]) =>
       .execute();
 
     for (const p of parsed) {
-      db.insert(issues).values({
-        id: v4(),
-        title: p,
-        date: rel[0].releaseDate,
-        releaseId: rel[0].id,
-      });
+      const added = await db
+        .insert(issues)
+        .values({
+          id: v4(),
+          title: p,
+          date: rel[0].releaseDate,
+          releaseId: rel[0].id,
+        })
+        .returning({
+          id: issues.id,
+          title: issues.title,
+        })
+        .execute();
+      console.log({ added });
     }
 
     return ok({

@@ -1,34 +1,32 @@
 import { relations } from "drizzle-orm";
-import {
-  integer,
-  sqliteTable,
-  text,
-  uniqueIndex,
-} from "drizzle-orm/sqlite-core";
+import { date, pgTable, text, uniqueIndex } from "drizzle-orm/pg-core";
 
-export const releases = sqliteTable(
+export const releases = pgTable(
   "release",
   {
-    id: text("id").unique().notNull(),
-    releaseDate: integer("release-date", {
-      mode: "timestamp",
-    }).unique(),
+    id: text("id").unique().notNull().primaryKey(),
+    releaseDate: date("release-date").unique(),
     name: text("name"),
     url: text("url"),
   },
   (table) => ({
+    idIdx: uniqueIndex("release-id-idx").on(table.id),
     releaseDateIndex: uniqueIndex("release-date-index").on(table.releaseDate),
   }),
 );
 
-export const issues = sqliteTable("issue", {
-  id: text("id").unique().notNull(),
-  title: text("title"),
-  date: integer("date", {
-    mode: "timestamp",
+export const issues = pgTable(
+  "issue",
+  {
+    id: text("id").unique().notNull().primaryKey(),
+    title: text("title"),
+    date: date("date"),
+    releaseId: text("release-id").references(() => releases.id),
+  },
+  (t) => ({
+    idIdx: uniqueIndex("id_index").on(t.id),
   }),
-  releaseId: text("release-id").references(() => releases.id),
-});
+);
 
 export const releaseIssueRelation = relations(releases, ({ many }) => ({
   issues: many(issues),
