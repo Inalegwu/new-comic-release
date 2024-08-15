@@ -1,3 +1,4 @@
+import { relations } from "drizzle-orm";
 import {
   integer,
   sqliteTable,
@@ -5,7 +6,7 @@ import {
   uniqueIndex,
 } from "drizzle-orm/sqlite-core";
 
-export const release = sqliteTable(
+export const releases = sqliteTable(
   "release",
   {
     id: text("id").unique().notNull(),
@@ -19,17 +20,22 @@ export const release = sqliteTable(
   }),
 );
 
-export const comingSoon = sqliteTable(
-  "coming-soon",
-  {
-    id: text("id").unique().notNull(),
-    releaseDate: integer("release-date", {
-      mode: "timestamp",
-    }),
-    url: text("url"),
-  },
-  (t) => ({
-    releaseDateIndex: uniqueIndex("release-date-index").on(t.releaseDate),
-    idIndex: uniqueIndex("id-idx").on(t.id),
+export const issues = sqliteTable("issue", {
+  id: text("id").unique().notNull(),
+  title: text("title"),
+  date: integer("date", {
+    mode: "timestamp",
   }),
-);
+  releaseId: text("release-id").references(() => releases.id),
+});
+
+export const releaseIssueRelation = relations(releases, ({ many }) => ({
+  issues: many(issues),
+}));
+
+export const issueReleaseRelation = relations(issues, ({ one }) => ({
+  release: one(releases, {
+    fields: [issues.releaseId],
+    references: [releases.id],
+  }),
+}));

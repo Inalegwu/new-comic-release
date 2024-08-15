@@ -6,11 +6,23 @@ type Data = {
   title: string;
   href: string;
   date: string;
+  isNew: boolean;
+  timestamp: number;
 };
 
 const parseData = (data: Data[]) =>
-  ok({
-    completed: true,
+  // biome-ignore lint/complexity/noForEach: one liner
+  data.forEach(async (article) => {
+    const page = await axios.get(article.href);
+
+    const $ = load(page.data);
+    const body = $("div.tdb-block-inner").find("p");
+
+    console.log(`${body.text()} \n`);
+
+    return ok({
+      completed: true,
+    });
   });
 
 (async (url: string) => {
@@ -32,22 +44,19 @@ const parseData = (data: Data[]) =>
     if (title.split(":").length < 2) return;
 
     const date = title.match(/\b((\w{3,9})\s+\d{1,2},\s+\d{4})\b/)?.[0];
-    const raw = Date.parse(date!);
-    const isNew = Date.now() <= raw;
-
-    console.log({ date, raw, isNew });
+    const timestamp = Date.parse(date!);
+    const isNew = Date.now() <= timestamp;
 
     data.push({
       title,
       href,
       date: date!,
+      isNew,
+      timestamp,
     });
   });
 
   console.log(data);
 
-  parseData(data).match(
-    (t) => {},
-    (e) => {},
-  );
+  parseData(data);
 })("https://comixnow.com/category/dc-weekly/");
