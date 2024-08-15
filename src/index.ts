@@ -1,6 +1,5 @@
 import axios from "axios";
 import { load } from "cheerio";
-import { ok } from "neverthrow";
 import { v4 } from "uuid";
 import { db } from "./db";
 import { issues, releases } from "./db/schema";
@@ -78,10 +77,7 @@ const parseData = (data: Data[]) =>
         .execute();
       console.log({ added });
     }
-
-    return ok({
-      completed: true,
-    });
+    process.exit();
   });
 
 (async (url: string) => {
