@@ -129,7 +129,7 @@ export const main = async (url: string) => {
   // console.log(data);
 
   for (const article of data) {
-    if (!article.isNew) return;
+    // if (!article.isNew) return;
 
     console.log(`parsing ${article.title}`);
     if (!article.isNew) return;
