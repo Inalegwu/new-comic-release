@@ -62,7 +62,6 @@ const parseData = (data: Data[]) =>
       .execute();
 
     for (const p of parsed) {
-      console.log(`Adding ${p}`);
       const added = await db
         .insert(issues)
         .values({
@@ -76,7 +75,7 @@ const parseData = (data: Data[]) =>
           title: issues.title,
         })
         .execute();
-      console.log({ added });
+      console.log({ added: added[0] });
     }
     process.exit();
   });
