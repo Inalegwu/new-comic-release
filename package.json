@@ -3,7 +3,8 @@
   "module": "src/index.ts",
   "type": "module",
   "scripts": {
-    "dev": "bun run src/index.ts"
+    "dev": "bun run src/index.ts",
+    "deploy:trigger-prod": "npx trigger.dev@3.0.0-beta.34 deploy"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.8.3",
@@ -26,10 +27,5 @@
     "postgres": "^3.4.4",
     "uuid": "^10.0.0"
   },
-  "trustedDependencies": [
-    "@biomejs/biome",
-    "esbuild",
-    "msw",
-    "protobufjs"
-  ]
+  "trustedDependencies": ["@biomejs/biome", "esbuild", "msw", "protobufjs"]
 }
