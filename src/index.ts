@@ -26,7 +26,7 @@ const parseData = async (data: Data[]) => {
 
     if (exists) {
       console.log(`${exists.name} is already saved`);
-      process.exit();
+      return;
     }
 
     const page = await axios.get(article.href);
@@ -82,8 +82,8 @@ const parseData = async (data: Data[]) => {
         .execute();
       console.log(`Saved ${added[0].title}`);
     }
-    process.exit();
   }
+  return;
 };
 
 export const main = async (url: string) => {
