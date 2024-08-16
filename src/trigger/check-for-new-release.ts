@@ -4,5 +4,11 @@ import { main } from "../index";
 export const checkForNewRelease = schedules.task({
   id: "check-for-new-release",
   cron: "0 0 * * *",
-  run: async () => await main("https://comixnow.com/category/dc-weekly/"),
+  run: async () => {
+    try {
+      await main("https://comixnow.com/category/dc-weekly/");
+    } catch (e) {
+      throw new Error("Failed");
+    }
+  },
 });

@@ -12,9 +12,9 @@ type Data = {
   timestamp: number;
 };
 
-const parseData = (data: Data[]) =>
-  // biome-ignore lint/complexity/noForEach: one liner
-  data.forEach(async (article) => {
+const parseData = async (data: Data[]) => {
+  for (const article of data) {
+    console.log(`parsing ${article.title}`);
     if (!article.isNew) return;
 
     const exists = await db.query.releases.findFirst({
@@ -25,7 +25,7 @@ const parseData = (data: Data[]) =>
     });
 
     if (exists) {
-      console.log("Already saved", { exists });
+      console.log(`${exists.name} is already saved`);
       process.exit();
     }
 
@@ -58,10 +58,15 @@ const parseData = (data: Data[]) =>
       .returning({
         id: releases.id,
         releaseDate: releases.releaseDate,
+        name: releases.name,
       })
       .execute();
 
+    console.log(`Saved release : ${rel[0].name}`);
+
+    console.log(`Attempting to add issues to ${rel[0].name}`);
     for (const p of parsed) {
+      console.log(`Attempting to save ${p}`);
       const added = await db
         .insert(issues)
         .values({
@@ -75,10 +80,11 @@ const parseData = (data: Data[]) =>
           title: issues.title,
         })
         .execute();
-      console.log({ added: added[0] });
+      console.log(`Saved ${added[0].title}`);
     }
     process.exit();
-  });
+  }
+};
 
 export const main = async (url: string) => {
   console.log(`Directing worker to ${url}`);
@@ -111,9 +117,13 @@ export const main = async (url: string) => {
       isNew,
       timestamp,
     };
+
+    console.log(`adding ${meta.title} to data list \n`);
+
     data.push(meta);
   });
 
+  console.log("attempting to parse and save data");
   parseData(data);
 };
 
