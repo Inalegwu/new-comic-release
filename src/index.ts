@@ -15,10 +15,10 @@ type Data = {
 const parseData = (data: Data[]) =>
   // biome-ignore lint/complexity/noForEach: one liner
   data.forEach(async (article) => {
-    // if (!article.isNew) return;
+    if (!article.isNew) return;
 
     const exists = await db.query.releases.findFirst({
-      where: (release, { eq }) => eq(releases.releaseDate, article.date),
+      where: (release, { eq }) => eq(release.releaseDate, article.date),
       with: {
         issues: true,
       },
@@ -62,6 +62,7 @@ const parseData = (data: Data[]) =>
       .execute();
 
     for (const p of parsed) {
+      console.log(`Adding ${p}`);
       const added = await db
         .insert(issues)
         .values({
@@ -81,9 +82,11 @@ const parseData = (data: Data[]) =>
   });
 
 export const main = async (url: string) => {
+  console.log(`Directing worker to ${url}`);
   const data: Data[] = [];
   const page = await axios.get(url);
 
+  console.log("loading page");
   const $ = load(page.data);
 
   const posts = $("div.tdb_module_loop").find("a");
@@ -102,16 +105,17 @@ export const main = async (url: string) => {
     const timestamp = Date.parse(date!);
     const isNew = Date.now() <= timestamp;
 
-    data.push({
+    const meta = {
       title,
       href,
       date: date!,
       isNew,
       timestamp,
-    });
+    };
+    data.push(meta);
   });
-
-  console.log(data);
 
   parseData(data);
 };
+
+main("https://comixnow.com/category/dc-weekly/");
