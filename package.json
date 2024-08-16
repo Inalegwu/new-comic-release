@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "bun run src/index.ts",
-    "deploy:trigger-prod": "npx trigger.dev@3.0.0-beta.34 deploy"
+    "deploy:trigger-prod": "npx trigger.dev@beta deploy"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.8.3",
