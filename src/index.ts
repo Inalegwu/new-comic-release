@@ -15,7 +15,7 @@ type Data = {
 const parseData = (data: Data[]) =>
   // biome-ignore lint/complexity/noForEach: one liner
   data.forEach(async (article) => {
-    if (!article.isNew) return;
+    // if (!article.isNew) return;
 
     const exists = await db.query.releases.findFirst({
       where: (release, { eq }) => eq(releases.releaseDate, article.date),
@@ -80,7 +80,7 @@ const parseData = (data: Data[]) =>
     process.exit();
   });
 
-(async (url: string) => {
+export const main = async (url: string) => {
   const data: Data[] = [];
   const page = await axios.get(url);
 
@@ -111,5 +111,7 @@ const parseData = (data: Data[]) =>
     });
   });
 
+  console.log(data);
+
   parseData(data);
-})("https://comixnow.com/category/dc-weekly/");
+};
