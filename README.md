@@ -1,4 +1,4 @@
 # New Comic Release
+### Scraper
 
-Detect when there is a new DC Comic Release and Writes it to a Turso database
-which will be used to inform me of new releases
+This repo contains all code that is used to discover new releases from scraping destintions to write to a supabase project database which will be used by the client application to notify of new releases.
